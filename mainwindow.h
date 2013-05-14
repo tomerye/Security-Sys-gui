@@ -43,6 +43,7 @@ public slots:
     void newClientConnection(size_t);
 private slots:
     void on_comboBox_currentIndexChanged(int index);
+
 };
 
 #endif // MAINWINDOW_H

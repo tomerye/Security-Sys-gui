@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include <QDebug>
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),io_service_(),server_(55555,io_service_),
@@ -29,11 +29,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //priority combobox
-    ui->comboBox->
+    QStringList comboBoxStrings;
+    comboBoxStrings << "0" << "1" << "2" << "3";
+    ui->comboBox->insertItems(0,comboBoxStrings);
+
+    //connections
+    //add types to meta type
+    qRegisterMetaType<QVector<QString> >("QVector<QString>");
+    qRegisterMetaType<size_t>("size_t");
+    //new Client
     connect(&server_,SIGNAL(newConnection(size_t)),this,SLOT(newClientConnection(size_t)));
+    //new event
     connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
-    qRegisterMetaType<QVector<QString> >();
-    qRegisterMetaType<size_t>();
+
 }
 
 MainWindow::~MainWindow()
@@ -42,6 +50,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::newEventSlot(QVector<QString> event){
+    qDebug() << event;
     this->eventsModel->insertRow(0,QModelIndex());
     for(int i=0 ; i<event.size();i++)
     {
@@ -91,3 +100,4 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
     this->eventProxyFilter->setFilterFixedString(priorityToFilter);
 
 }
+

@@ -50,14 +50,14 @@ void ClientConnection::handleReceivePacket(const boost::system::error_code& e,
                   << std::endl;
 
         std::cout.flush();
-
-        switch (tmpPacket.opcode_) {
-        case 0:
-            pServer_->newEventPrv(id_,tmpPacket);
-            break;
-        default:
-            break;
-        }
+        pServer_->newEventPrv(id_,tmpPacket);
+//        switch (tmpPacket.opcode_) {
+//        case 0:
+//            pServer_->newEventPrv(id_,tmpPacket);
+//            break;
+//        default:
+//            break;
+//        }
 
     } else {
         std::cout << "error while parsing the packet\n";
