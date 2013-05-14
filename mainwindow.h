@@ -2,16 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include <qtserver.h>
 #include <boost/thread.hpp>
 #include <boost/bind.hpp>
 #include <boost/asio.hpp>
-#include "/home/tomer/workspace/Server/src/Server.h"
+#include "Server.h"
 #include "pictureview.h"
 #include <QtCore>
 #include <QTableView>
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
+#include <QStringListModel>
 
 namespace Ui {
 class MainWindow;
@@ -31,14 +31,18 @@ private:
     Server server_;
     boost::thread runThread_;
     PictureView *pPictureView;
+
+    QStringListModel *clientIdModel;
     QStandardItemModel *eventsModel;
     QSortFilterProxyModel *eventProxyFilter;
 
 public slots:
     void newEventSlot(QVector<QString>);
-    void newCamera(int);
-    void removeCamera(int);
+    void removeCamera(size_t);
     void openPictureView(std::string);
+    void newClientConnection(size_t);
+private slots:
+    void on_comboBox_currentIndexChanged(int index);
 };
 
 #endif // MAINWINDOW_H

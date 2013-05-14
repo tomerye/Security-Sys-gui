@@ -1,6 +1,6 @@
 #include "mainwindow.h"
 #include <QApplication>
-#include "qtserver.h"
+
 
 int main(int argc, char *argv[])
 {
@@ -9,6 +9,5 @@ int main(int argc, char *argv[])
     w.show();
 
 
-    QtServer qtserver;
     return a.exec();
 }

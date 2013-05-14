@@ -23,8 +23,17 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setModel(this->eventProxyFilter);
 
 
+    //id list
+    this->clientIdModel = new QStringListModel(this);
+    ui->listView->setModel(this->clientIdModel);
+
+
+    //priority combobox
+    ui->comboBox->
+    connect(&server_,SIGNAL(newConnection(size_t)),this,SLOT(newClientConnection(size_t)));
     connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
     qRegisterMetaType<QVector<QString> >();
+    qRegisterMetaType<size_t>();
 }
 
 MainWindow::~MainWindow()
@@ -41,13 +50,16 @@ void MainWindow::newEventSlot(QVector<QString> event){
     }
 }
 
+void MainWindow::newClientConnection(size_t id){
+    this->clientIdModel->insertRow(0,QModelIndex());
+    const QVariant *value = new QVariant(1);
 
-void MainWindow::newCamera(int id){
-
+    QModelIndex index = this->clientIdModel->index(0,0,QModelIndex());
+    this->clientIdModel->setData(index,*value,0);
 }
 
 
-void MainWindow::removeCamera(int){
+void MainWindow::removeCamera(size_t id){
 
 }
 
@@ -55,4 +67,27 @@ void MainWindow::openPictureView(std::string path){
     this->pPictureView = new PictureView(this);
     this->pPictureView->setPicture(path);
     this->show();
+}
+
+void MainWindow::on_comboBox_currentIndexChanged(int index)
+{
+    QString priorityToFilter;
+    switch (index) {
+    case 0:
+        priorityToFilter = "";
+        break;
+    case 1:
+        priorityToFilter = "1";
+        break;
+    case 2:
+        priorityToFilter = "2";
+        break;
+    case 3:
+        priorityToFilter = "3";
+        break;
+    default:
+        break;
+    }
+    this->eventProxyFilter->setFilterFixedString(priorityToFilter);
+
 }
