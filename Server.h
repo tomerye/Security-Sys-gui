@@ -46,7 +46,7 @@ signals:
     void newEvent(QVector<QString>);
     void newPicture(std::string);
     void newConnection(u_int32_t);
-    void deleteConnectionSignal(size_t);
+    void deleteConnectionSignal(u_int32_t);
 
 public slots:
 

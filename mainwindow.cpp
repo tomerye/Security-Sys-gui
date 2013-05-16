@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     qRegisterMetaType<u_int32_t>("u_int32_t");
     //new Client
     connect(&server_,SIGNAL(newConnection(u_int32_t)),this,SLOT(addClientConnection(u_int32_t)));
+    //delete client
+    connect(&server_,SIGNAL(deleteConnectionSignal(u_int32_t)),this,SLOT(removeCamera(u_int32_t)));
     //new event
     connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
 
@@ -94,7 +96,17 @@ void MainWindow::addClientConnection(u_int32_t id){
 
 
 void MainWindow::removeCamera(u_int32_t id){
-//    this->clientIdModel->removeRow(this->clientIdModel->match())
+    QModelIndex index;
+    QVariant data;
+    for(int i=0;i<this->clientIdModel->rowCount();i++){
+        index =  this->clientIdModel->index(i,0,QModelIndex());
+        data = this->clientIdModel->data(index,Qt::DisplayRole);
+        if(data==id)
+        {
+            qDebug() << "delete id " << id;
+            this->clientIdModel->removeRow(i,QModelIndex());
+        }
+    }
 }
 
 void MainWindow::openPictureView(std::string path){
