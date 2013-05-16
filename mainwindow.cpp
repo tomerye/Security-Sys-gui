@@ -88,15 +88,13 @@ void MainWindow::newEventSlot(QVector<QString> event){
 
 void MainWindow::addClientConnection(u_int32_t id){
     this->clientIdModel->insertRow(0,QModelIndex());
-    const QVariant *value = new QVariant(id);
-
     QModelIndex index = this->clientIdModel->index(0,0,QModelIndex());
-    this->clientIdModel->setData(index,*value,0);
+    this->clientIdModel->setData(index,id,0);
 }
 
 
 void MainWindow::removeCamera(u_int32_t id){
-
+//    this->clientIdModel->removeRow(this->clientIdModel->match())
 }
 
 void MainWindow::openPictureView(std::string path){
