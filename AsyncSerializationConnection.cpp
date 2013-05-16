@@ -19,7 +19,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-#include "Packet.h"
+
 
 class AsyncSerializationConnection {
 public:

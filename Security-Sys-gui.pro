@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -25,8 +25,9 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     pictureview.h \
     Server.h \
-    Packet.h \
     ClientConnection.h \
+    PacketForServer.h \
+    PacketForClient.h
 
 
 FORMS    += mainwindow.ui \

@@ -8,72 +8,66 @@
 #include "ClientConnection.h"
 
 ClientConnection::ClientConnection(tcp::socket *socket, Server *server,
-                                   size_t id) :
-    id_(id), connection_(socket) {
-    this->pServer_ = server;
-    waitForPacket();
+		u_int32_t id) :
+		id_(id), connection_(socket) {
+	this->pServer_ = server;
+	waitForPacket();
 }
 
 ClientConnection::~ClientConnection() {
-    // TODO Auto-generated destructor stub
+	// TODO Auto-generated destructor stub
 }
 
-void ClientConnection::send(Packet packet) {
-    std::vector<Packet> *packetsVec = new std::vector<Packet>();
-    packetsVec->push_back(packet);
-    connection_.async_write(*packetsVec,
-                            boost::bind(&ClientConnection::sendResult, this,
-                                        boost::asio::placeholders::error, packetsVec));
+void ClientConnection::send(PacketForClient *packet) {
+	bool isEmpty = this->outPacketsBuffer_.empty();
+	this->outPacketsBuffer_.push_back(packet);
+	if (isEmpty) {
+		connection_.async_write(*(this->outPacketsBuffer_.front()),
+				boost::bind(&ClientConnection::handleSendPacket, this,
+						boost::asio::placeholders::error));
+	}
 }
 
 void ClientConnection::waitForPacket() {
-    std::cout << "waiting for packets from client\n";
-    std::cout.flush();
-    std::vector<Packet> *packetsVec = new std::vector<Packet>();
-    connection_.async_read(*packetsVec,
-                           boost::bind(&ClientConnection::handleReceivePacket, this,
-                                       boost::asio::placeholders::error, packetsVec));
+	std::cout << "waiting for packets from client\n";
+	std::cout.flush();
+	PacketForServer *newPacket = new PacketForServer();
+	connection_.async_read(*newPacket,
+			boost::bind(&ClientConnection::handleReceivePacket, this,
+					boost::asio::placeholders::error, newPacket));
 }
 
 void ClientConnection::handleReceivePacket(const boost::system::error_code& e,
-                                           std::vector<Packet> *packetsVec) {
+		PacketForServer *newPacket) {
 
-    if (!e) {
-        waitForPacket();
-        std::cout << "parsing the packet\n";
-        Packet tmpPacket = (*packetsVec)[0];
-
-        std::cout << "Recived id:" << tmpPacket.id_ << std::endl;
-        std::cout << "Recived file path:" << tmpPacket.file_path_
-                  << std::endl;
-        std::cout << "Recived opcode:" << tmpPacket.opcode_
-                  << std::endl;
-
-        std::cout.flush();
-        pServer_->newEventPrv(id_,tmpPacket);
-//        switch (tmpPacket.opcode_) {
-//        case 0:
-//            pServer_->newEventPrv(id_,tmpPacket);
-//            break;
-//        default:
-//            break;
-//        }
-
-    } else {
-        std::cout << "error while parsing the packet\n";
-        pServer_->deleteConnection(id_);
-    }
-    delete packetsVec;
+	if (!e) {
+		waitForPacket();
+		std::cout << "parsing the packet\n";
+		std::cout << "Recived id:" << newPacket->id_ << std::endl;
+		std::cout << "Recived file path:" << newPacket->file_path_ << std::endl;
+		std::cout << "Recived opcode:" << newPacket->opcode_ << std::endl;
+		std::cout.flush();
+	} else {
+		std::cout << "error while parsing the packet\n";
+		pServer_->deleteConnection(id_);
+	}
+	delete newPacket;
 }
 
-void ClientConnection::sendResult(const boost::system::error_code& e,
-                                  std::vector<Packet> *packetsVec) {
-    delete packetsVec;
-    if (!e) {
-        std::cout << "packet sent to client!\n";
+void ClientConnection::handleSendPacket(const boost::system::error_code& e) {
 
-    } else {
-        std::cout << "error send to client\n";
-        pServer_->deleteConnection(id_);
-    }
+	if (!e) {
+		std::cout << "packet sent to client!\n";
+		PacketForClient *tmp = this->outPacketsBuffer_.front();
+		this->outPacketsBuffer_.pop_front();
+		delete tmp;
+		if (!(this->outPacketsBuffer_.empty())) {
+			connection_.async_write(*(this->outPacketsBuffer_.front()),
+					boost::bind(&ClientConnection::handleSendPacket, this,
+							boost::asio::placeholders::error));
+		}
+	} else {
+		std::cout << "error send to client\n";
+		pServer_->deleteConnection(id_);
+	}
 }

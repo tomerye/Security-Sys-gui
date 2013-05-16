@@ -1,6 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow),io_service_(),server_(55555,io_service_),
@@ -36,17 +38,42 @@ MainWindow::MainWindow(QWidget *parent) :
     //connections
     //add types to meta type
     qRegisterMetaType<QVector<QString> >("QVector<QString>");
-    qRegisterMetaType<size_t>("size_t");
+    qRegisterMetaType<u_int32_t>("u_int32_t");
     //new Client
-    connect(&server_,SIGNAL(newConnection(size_t)),this,SLOT(newClientConnection(size_t)));
+    connect(&server_,SIGNAL(newConnection(u_int32_t)),this,SLOT(addClientConnection(u_int32_t)));
     //new event
     connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
 
+    //SQL
+    setupDB();
+    this->sqlModel = new QSqlQueryModel();
+    ui->tableView_2->setModel(this->sqlModel);
 }
+
+
 
 MainWindow::~MainWindow()
 {
+    db.close();
     delete ui;
+}
+
+
+void MainWindow::setupDB(){
+    QString server = "";
+    QString dbname = "";
+
+    db = QSqlDatabase::addDatabase("QODBC");
+    db.setHostName("");
+    db.setDatabaseName("");
+
+    if(db.open())
+    {
+        qDebug() << "DB is open";
+    }
+    else{
+        qDebug() << "Error:= " << db.lastError();
+    }
 }
 
 void MainWindow::newEventSlot(QVector<QString> event){
@@ -59,16 +86,16 @@ void MainWindow::newEventSlot(QVector<QString> event){
     }
 }
 
-void MainWindow::newClientConnection(size_t id){
+void MainWindow::addClientConnection(u_int32_t id){
     this->clientIdModel->insertRow(0,QModelIndex());
-    const QVariant *value = new QVariant(1);
+    const QVariant *value = new QVariant(id);
 
     QModelIndex index = this->clientIdModel->index(0,0,QModelIndex());
     this->clientIdModel->setData(index,*value,0);
 }
 
 
-void MainWindow::removeCamera(size_t id){
+void MainWindow::removeCamera(u_int32_t id){
 
 }
 
@@ -101,3 +128,8 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
 
 }
 
+
+void MainWindow::on_pushButton_clicked()
+{
+    this->sqlModel->setQuery(ui->textEdit->toPlainText());
+}

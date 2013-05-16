@@ -1,16 +1,14 @@
 /*
- * Packet.h
+ * PacketForClient.h
  *
- *  Created on: Apr 6, 2013
+ *  Created on: May 14, 2013
  *      Author: tomer
  */
 
-#ifndef PACKET_H_
-#define PACKET_H_
+#ifndef PACKETFORCLIENT_H_
+#define PACKETFORCLIENT_H_
 
-
-
-struct Packet {
+struct PacketForClient {
     int id_;
     int opcode_;
     std::string file_path_;
@@ -27,4 +25,5 @@ struct Packet {
     }
 };
 
-#endif /* PACKET_H_ */
+
+#endif /* PACKETFORCLIENT_H_ */

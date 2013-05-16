@@ -10,8 +10,8 @@
 using namespace std;
 
 Server::Server(int port, boost::asio::io_service &io_service) :
-        endpoint_(tcp::v4(), port), io_service_(io_service),
-        acceptor_(io_service, endpoint_)/*, pFtpClient_(NULL)*/{
+		endpoint_(tcp::v4(), port), io_service_(io_service), acceptor_(
+				io_service, endpoint_) {
 	startAccept();
 
 }
@@ -25,17 +25,16 @@ void Server::startAccept() {
 }
 
 Server::~Server() {
-//    this->pFtpClient_->Logout();
-//    delete pFtpClient_;
+// TODO Auto-generated destructor stub
 }
 
 void Server::handleGetNewConnectionID(const boost::system::error_code& e,
 		tcp::socket *newSocket) {
 
 	if (!e) {
-		size_t *clientId = new size_t();
+		u_int32_t *clientId = new u_int32_t();
 		boost::asio::async_read(*newSocket,
-				boost::asio::buffer(clientId, sizeof(size_t)),
+				boost::asio::buffer(clientId, sizeof(u_int32_t)),
 				boost::bind(&Server::addNewConnection, this, clientId,
 						newSocket, boost::asio::placeholders::error));
 		startAccept();
@@ -48,9 +47,9 @@ void Server::handleGetNewConnectionID(const boost::system::error_code& e,
 
 }
 
-void Server::addNewConnection(size_t *id, tcp::socket *newSocket,
+void Server::addNewConnection(u_int32_t *id, tcp::socket *newSocket,
 		const boost::system::error_code& e) {
-	std::cout << "received new ID:" << (size_t) *id << std::endl;
+	std::cout << "received new ID:" << (u_int32_t) *id << std::endl;
 	std::cout.flush();
 	if (!e) {
 		if (connection_map_.find(*id) == connection_map_.end()) {
@@ -69,8 +68,9 @@ void Server::addNewConnection(size_t *id, tcp::socket *newSocket,
 	}
 }
 
-void Server::deleteConnection(const size_t id) {
-	std::map<int, ClientConnection*>::iterator it = connection_map_.find(id);
+void Server::deleteConnection(const u_int32_t id) {
+	std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(
+			id);
 	cout << "Delete connection with ID:" << id << endl;
 	if (it != connection_map_.end()) {
 		connection_map_.erase(it);
@@ -81,8 +81,9 @@ void Server::deleteConnection(const size_t id) {
 	}
 }
 
-void Server::send(const size_t id, const Packet packet) {
-	std::map<int, ClientConnection*>::iterator it = connection_map_.find(id);
+void Server::send(const u_int32_t id, PacketForClient *packet) {
+	std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(
+			id);
 	cout << "trying to send packet to ID:" << id << endl;
 	if (it != connection_map_.end()) {
 		it->second->send(packet);
@@ -92,11 +93,11 @@ void Server::send(const size_t id, const Packet packet) {
 
 }
 
-void Server::newEventPrv(int clientid,Packet packet){
-    std::map<int, ClientConnection*>::iterator it = connection_map_.find(clientid);
+void Server::newEventPrv(u_int32_t clientid,PacketForServer packet){
+    std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
 
     QVector<QString> eventVector;
-    eventVector << QString::fromStdString(it->second->getSite()) << QString::fromStdString(packet.time_) << QString::fromStdString(it->second->getLocation()) << QString::number(packet.priority_);
+//    eventVector << QString::fromStdString(it->second->getSite()) << QString::fromStdString(packet.time_) << QString::fromStdString(it->second->getLocation()) << QString::number(packet.priority_);
     emit newEvent(eventVector);
 }
 

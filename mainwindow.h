@@ -12,6 +12,7 @@
 #include <QStandardItemModel>
 #include <QSortFilterProxyModel>
 #include <QStringListModel>
+#include <QtSql>
 
 namespace Ui {
 class MainWindow;
@@ -31,19 +32,24 @@ private:
     Server server_;
     boost::thread runThread_;
     PictureView *pPictureView;
+    QSqlDatabase db;
+
+    void setupDB();
 
     QStringListModel *clientIdModel;
     QStandardItemModel *eventsModel;
     QSortFilterProxyModel *eventProxyFilter;
+    QSqlQueryModel *sqlModel;
 
 public slots:
     void newEventSlot(QVector<QString>);
-    void removeCamera(size_t);
+    void removeCamera(u_int32_t);
     void openPictureView(std::string);
-    void newClientConnection(size_t);
+    void addClientConnection(u_int32_t);
 private slots:
     void on_comboBox_currentIndexChanged(int index);
 
+    void on_pushButton_clicked();
 };
 
 #endif // MAINWINDOW_H
