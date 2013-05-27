@@ -101,15 +101,26 @@ void Server::newEventPrv(u_int32_t clientid,PacketForServer packet){
     emit newEvent(eventVector);
 }
 
-//void Server::getFile(int clientid, string srcPath, string dstPath){
-//    initFTP(clientid);
-//    this->pFtpClient_->DownloadFile(srcPath,dstPath);
-//    emit newPicture(dstPath);
-//}
+void Server::getFile(u_int32_t clientid, string srcPath, string dstPath){
+    std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
+    boost::asio::ip::tcp::endpoint remote_ep = (*(it->second->getSocket())).remote_endpoint();
+    boost::asio::ip::address remote_ad = remote_ep.address();
+    std::string clientIP = remote_ad.to_string();
+    qDebug() << QString::fromStdString(clientIP);
+    QUrl ftpClientUrl(QString::fromStdString(clientIP));
+    ftpClientUrl.setUserName("ftp");
+    ftpClientUrl.setPassword("ftp");
+    ftpClientUrl.setPort(21);
+    ftpClientUrl.setPath("1");
+    QNetworkRequest downloadReq(ftpClientUrl);
+    QNetworkAccessManager *downloadManager = new QNetworkAccessManager(this);
+    QNetworkReply *reply = downloadManager->get(downloadReq);
+
+}
 
 //void Server::initFTP(int clientid){
 //    if(this->pFtpClient_==NULL){
-//        std::map<int, ClientConnection*>::iterator it = connection_map_.find(clientid);
+//        std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
 //        boost::asio::ip::tcp::endpoint remote_ep = (*(it->second->getSocket())).remote_endpoint();
 //        boost::asio::ip::address remote_ad = remote_ep.address();
 //        std::string clientIP = remote_ad.to_string();

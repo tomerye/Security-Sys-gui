@@ -143,3 +143,8 @@ void MainWindow::on_pushButton_clicked()
 {
     this->sqlModel->setQuery(ui->textEdit->toPlainText());
 }
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    this->server_.getFile(123,"1","2");
+}
