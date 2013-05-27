@@ -38,6 +38,7 @@ private:
 
     QStringListModel *clientIdModel;
     QStandardItemModel *eventsModel;
+    QStandardItemModel *statisticModel;
     QSortFilterProxyModel *eventProxyFilter;
     QSqlQueryModel *sqlModel;
 
@@ -50,6 +51,7 @@ private slots:
     void on_comboBox_currentIndexChanged(int index);
 
     void on_pushButton_clicked();
+    void on_listView_clicked(const QModelIndex &index);
 };
 
 #endif // MAINWINDOW_H

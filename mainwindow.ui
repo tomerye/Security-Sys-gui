@@ -24,7 +24,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -33,10 +33,10 @@
      <widget class="QListView" name="listView">
       <property name="geometry">
        <rect>
-        <x>950</x>
-        <y>30</y>
+        <x>510</x>
+        <y>60</y>
         <width>181</width>
-        <height>411</height>
+        <height>381</height>
        </rect>
       </property>
      </widget>
@@ -57,6 +57,16 @@
         <y>20</y>
         <width>78</width>
         <height>25</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTableView" name="tableView_3">
+      <property name="geometry">
+       <rect>
+        <x>800</x>
+        <y>90</y>
+        <width>256</width>
+        <height>141</height>
        </rect>
       </property>
      </widget>

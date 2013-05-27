@@ -25,6 +25,8 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setModel(this->eventProxyFilter);
 
 
+
+
     //id list
     this->clientIdModel = new QStringListModel(this);
     ui->listView->setModel(this->clientIdModel);
@@ -34,6 +36,15 @@ MainWindow::MainWindow(QWidget *parent) :
     QStringList comboBoxStrings;
     comboBoxStrings << "0" << "1" << "2" << "3";
     ui->comboBox->insertItems(0,comboBoxStrings);
+
+
+
+    //statistic table
+    this->statisticModel = new QStandardItemModel(comboBoxStrings.size(),1,this);
+    this->statisticModel->setVerticalHeaderLabels(comboBoxStrings);
+
+    ui->tableView_3->setModel(this->statisticModel);
+
 
     //connections
     //add types to meta type
@@ -142,4 +153,17 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
 void MainWindow::on_pushButton_clicked()
 {
     this->sqlModel->setQuery(ui->textEdit->toPlainText());
+}
+
+void MainWindow::on_listView_clicked(const QModelIndex &index)
+{
+    QVariant clientID = this->clientIdModel->data(index,Qt::DisplayRole);
+    QSortFilterProxyModel clickedClientIDAllEvents;
+    clickedClientIDAllEvents.setSourceModel(this->eventsModel);
+    clickedClientIDAllEvents.setFilterFixedString(clientID.toString());
+
+   QStringList statisticStringList;
+   statisticStringList << clickedClientIDAllEvents.rowCount(QModelIndex());
+
+
 }
