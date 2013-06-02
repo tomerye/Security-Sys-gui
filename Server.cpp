@@ -103,18 +103,39 @@ void Server::newEventPrv(u_int32_t clientid,PacketForServer packet){
 
 void Server::getFile(u_int32_t clientid, string srcPath, string dstPath){
     std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
+    if (it == connection_map_.end()) {
+        qDebug() << "no such id/n";
+        return;
+    }
     boost::asio::ip::tcp::endpoint remote_ep = (*(it->second->getSocket())).remote_endpoint();
     boost::asio::ip::address remote_ad = remote_ep.address();
     std::string clientIP = remote_ad.to_string();
     qDebug() << QString::fromStdString(clientIP);
-    QUrl ftpClientUrl(QString::fromStdString(clientIP));
-    ftpClientUrl.setUserName("ftp");
-    ftpClientUrl.setPassword("ftp");
-    ftpClientUrl.setPort(21);
-    ftpClientUrl.setPath("1");
+    QString url="ftp://";
+    url+=QString::fromStdString(clientIP);
+    url+="/";
+    url+=QString::fromStdString(srcPath);
+    qDebug() << url;
+    QUrl ftpClientUrl(url);
+
     QNetworkRequest downloadReq(ftpClientUrl);
     QNetworkAccessManager *downloadManager = new QNetworkAccessManager(this);
     QNetworkReply *reply = downloadManager->get(downloadReq);
+    qDebug() << reply->error();
+    connect(downloadManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(newFtpPacket(QNetworkReply*)));
+}
+
+void Server::newFtpPacket(QNetworkReply *reply){
+    QByteArray data = reply->readAll();
+    QVariant header = reply->header(QNetworkRequest::ContentTypeHeader);
+    qDebug()<< data;
+    qDebug() << reply->hasRawHeader();
+    qDebug () << header;
+    reply->close();
+    QFile file("/home/tomer/tmp/tmp2/2");
+    file.open(QIODevice::WriteOnly);
+    file.write(data);
+    file.close();
 
 }
 

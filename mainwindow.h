@@ -47,9 +47,9 @@ public slots:
     void removeCamera(u_int32_t);
     void openPictureView(std::string);
     void addClientConnection(u_int32_t);
+
 private slots:
     void on_comboBox_currentIndexChanged(int index);
-
     void on_pushButton_clicked();
     void on_listView_clicked(const QModelIndex &index);
 	void on_pushButton_2_clicked();

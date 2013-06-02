@@ -146,17 +146,23 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_listView_clicked(const QModelIndex &index)
 {
-    QVariant clientID = this->clientIdModel->data(index,Qt::DisplayRole);
-    QSortFilterProxyModel clickedClientIDAllEvents;
-    clickedClientIDAllEvents.setSourceModel(this->eventsModel);
-    clickedClientIDAllEvents.setFilterFixedString(clientID.toString());
-
-   QStringList statisticStringList;
-   statisticStringList << clickedClientIDAllEvents.rowCount(QModelIndex());
-
-
+//    QVariant clientID = this->clientIdModel->data(index,Qt::DisplayRole);
+//    QSortFilterProxyModel clientIDFilter;
+//    clientIDFilter.setSourceModel(this->eventsModel);
+//    clientIDFilter.setFilterFixedString(clientID.toString());
+//    clientIDFilter.setFilterKeyColumn(1);
+//    QSortFilterProxyModel priorityFilter;
+//    priorityFilter.setSourceModel(clientIDFilter);
+//    priorityFilter.setFilterFixedString("1");
+//    priorityFilter.setFilterKeyColumn(3);
+//    int priority3 = priorityFilter.rowCount(QModelIndex());
+//    priorityFilter.setFilterKeyColumn(2);
+//    int priority2 = priorityFilter.rowCount(QModelIndex());
+//    priorityFilter.setFilterKeyColumn(1);
+//    int priority1 = priorityFilter.rowCount(QModelIndex());
+//    ui->label->setText("level3: " + priority3 +" level2:" + priority2 + " level1:" + priority1);
 }
 void MainWindow::on_pushButton_2_clicked()
 {
-    this->server_.getFile(123,"1","2");
+    this->server_.getFile(123,"2.jpg","2");
 }

@@ -20,6 +20,7 @@
 #include <QNetworkRequest>
 #include <QDebug>
 #include <QNetworkReply>
+#include <QFile>
 
 //#include "FtpClient/FTPClient.h"
 
@@ -55,6 +56,7 @@ signals:
     void deleteConnectionSignal(u_int32_t);
 
 public slots:
+    void newFtpPacket(QNetworkReply*);
 
 };
 
