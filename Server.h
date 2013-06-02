@@ -15,6 +15,12 @@
 #include <boost/bind.hpp>
 #include <QVector>
 #include <QString>
+#include <QNetworkAccessManager>
+#include <QUrl>
+#include <QNetworkRequest>
+#include <QDebug>
+#include <QNetworkReply>
+
 //#include "FtpClient/FTPClient.h"
 
 class ClientConnection;
