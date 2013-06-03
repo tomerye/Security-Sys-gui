@@ -129,8 +129,9 @@ void Server::newFtpPacket(QNetworkReply *reply){
     QByteArray data = reply->readAll();
     QVariant header = reply->header(QNetworkRequest::ContentTypeHeader);
     qDebug()<< data;
-    qDebug() << reply->hasRawHeader();
+    qDebug() << reply->rawHeaderList();
     qDebug () << header;
+    qDebug() << reply->url();
     reply->close();
     QFile file("/home/tomer/tmp/tmp2/2");
     file.open(QIODevice::WriteOnly);
