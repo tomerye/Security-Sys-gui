@@ -11,17 +11,16 @@
 
 
 struct PacketForServer {
-	int id_;
-	std::string opcode_;
-	std::string file_path_;
+    int opcode_;
+    std::string file_path_;
+    int priority_;
 
-	template<typename Archive>
-	void serialize(Archive& ar, const unsigned int version) {
-		ar & opcode_;
-		ar & file_path_;
-		ar & id_;
-
-	}
+    template<typename Archive>
+    void serialize(Archive& ar, const unsigned int version) {
+        ar & opcode_;
+        ar & file_path_;
+        ar & priority_;
+    }
 };
 
 #endif /* PACKET_H_ */

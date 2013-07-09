@@ -73,17 +73,17 @@
        <string>PushButton</string>
       </property>
      </widget>
-     <widget class="QLabel" name="label">
+     <widget class="QProgressBar" name="progressBar">
       <property name="geometry">
        <rect>
-        <x>590</x>
-        <y>120</y>
-        <width>281</width>
-        <height>51</height>
+        <x>300</x>
+        <y>30</y>
+        <width>118</width>
+        <height>23</height>
        </rect>
       </property>
-      <property name="text">
-       <string>TextLabel</string>
+      <property name="value">
+       <number>24</number>
       </property>
      </widget>
     </widget>

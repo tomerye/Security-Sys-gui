@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //new event
     connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
 
-    //SQL
+    connect(&server_,SIGNAL(downloadProgressSignal(u_int32_t)),ui->progressBar,SLOT(setValue(int)));
     setupDB();
     this->sqlModel = new QSqlQueryModel();
     ui->tableView_2->setModel(this->sqlModel);
@@ -78,6 +78,7 @@ void MainWindow::setupDB(){
     }
 }
 
+//ID (DATE TIME) priority path
 void MainWindow::newEventSlot(QVector<QString> event){
     qDebug() << event;
     this->eventsModel->insertRow(0,QModelIndex());
@@ -164,5 +165,16 @@ void MainWindow::on_listView_clicked(const QModelIndex &index)
 }
 void MainWindow::on_pushButton_2_clicked()
 {
-    this->server_.getFile(123,"2.jpg","2");
+    this->pPictureView = new PictureView(this);
+    this->pPictureView->setPicture("/home/tomer/tmp/tmp2/2");
+    this->pPictureView->show();
+}
+
+void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
+{
+//    QVariant data = index.data(QModelIndex);
+    QStringList stringListData = (index.data()).toStringList();
+//    this->server_.getFile(stringListData[1].toStdString(),stringListData[2].toStdString());
+    this->server_.getFile(123,stringListData[2].toStdString());
+
 }

@@ -42,10 +42,13 @@ void ClientConnection::handleReceivePacket(const boost::system::error_code& e,
 
 	if (!e) {
 		waitForPacket();
-		std::cout << "parsing the packet\n";
-		std::cout << "Recived id:" << newPacket->id_ << std::endl;
-		std::cout << "Recived file path:" << newPacket->file_path_ << std::endl;
-		std::cout << "Recived opcode:" << newPacket->opcode_ << std::endl;
+        switch (newPacket->opcode_) {
+        case 1: //new event
+
+            break;
+        default:
+            break;
+        }
 		std::cout.flush();
 	} else {
 		std::cout << "error while parsing the packet\n";

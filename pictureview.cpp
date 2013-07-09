@@ -16,6 +16,7 @@ PictureView::~PictureView()
 
 
 void PictureView::setPicture(std::string path){
-    this->image = new QPixmap(QString::fromStdString(path));
-    ui->label->setPixmap(*(this->image));
+    QPixmap *image = new QPixmap(QString::fromStdString(path));
+    this->ui->label = new QLabel(this);
+    this->ui->label->setPixmap(*image);
 }

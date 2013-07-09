@@ -34,7 +34,7 @@ public:
 	void deleteConnection(const u_int32_t id);
 	void send(const u_int32_t id, PacketForClient *packet);
     void newEventPrv(u_int32_t clientid ,PacketForServer event);
-    void getFile(u_int32_t clientid, std::string srcPath, std::string dstPath);
+    void getFile(u_int32_t clientid, std::string srcPath);
 
 private:
 	tcp::endpoint endpoint_;
@@ -51,12 +51,14 @@ private:
 
 signals:
     void newEvent(QVector<QString>);
-    void newPicture(std::string);
+    void newPicture(QString);
     void newConnection(u_int32_t);
     void deleteConnectionSignal(u_int32_t);
+    void downloadProgressSignal(int);
 
 public slots:
     void newFtpPacket(QNetworkReply*);
+    void downloadProgressSlot(qint64,qint64);
 
 };
 

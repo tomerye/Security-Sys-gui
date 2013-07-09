@@ -97,11 +97,11 @@ void Server::newEventPrv(u_int32_t clientid,PacketForServer packet){
     std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
 
     QVector<QString> eventVector;
-//    eventVector << QString::fromStdString(it->second->getSite()) << QString::fromStdString(packet.time_) << QString::fromStdString(it->second->getLocation()) << QString::number(packet.priority_);
+    eventVector << QString::fromStdString(it->second->getSite()) << QString::fromStdString(packet.time_) << QString::fromStdString(it->second->getLocation()) << QString::number(packet.priority_);
     emit newEvent(eventVector);
 }
 
-void Server::getFile(u_int32_t clientid, string srcPath, string dstPath){
+void Server::getFile(u_int32_t clientid, string srcPath){
     std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
     if (it == connection_map_.end()) {
         qDebug() << "no such id/n";
@@ -123,6 +123,7 @@ void Server::getFile(u_int32_t clientid, string srcPath, string dstPath){
     QNetworkReply *reply = downloadManager->get(downloadReq);
     qDebug() << reply->error();
     connect(downloadManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(newFtpPacket(QNetworkReply*)));
+    connect(reply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(downloadProgressSlot(qint64,qint64)));
 }
 
 void Server::newFtpPacket(QNetworkReply *reply){
@@ -133,23 +134,21 @@ void Server::newFtpPacket(QNetworkReply *reply){
     qDebug () << header;
     qDebug() << reply->url();
     reply->close();
-    QFile file("/home/tomer/tmp/tmp2/2");
+    QString saveFilePath = "/home/tomer/tmp/tmp2";
+    saveFilePath += "3";
+    QFile file(saveFilePath);
     file.open(QIODevice::WriteOnly);
     file.write(data);
     file.close();
-
+    emit newPicture(saveFilePath);
+    emit downloadProgressSignal(0);
 }
 
-//void Server::initFTP(int clientid){
-//    if(this->pFtpClient_==NULL){
-//        std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
-//        boost::asio::ip::tcp::endpoint remote_ep = (*(it->second->getSocket())).remote_endpoint();
-//        boost::asio::ip::address remote_ad = remote_ep.address();
-//        std::string clientIP = remote_ad.to_string();
 
-//        this->pLogoninfo_ = new nsFTP::CLogonInfo(clientIP,21,"anonymous","ddd");
-//        this->pFtpClient_ = new nsFTP::CFTPClient();
-//        this->pFtpClient_->Login(*(this->pLogoninfo_));
+void Server::downloadProgressSlot(qint64 received,qint64 total){
+    if(total!=0)
+        emit downloadProgressSignal((int)(received/total));
+    else
+        emit downloadProgressSignal(0);
+}
 
-//    }
-//}

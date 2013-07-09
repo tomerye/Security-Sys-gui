@@ -20,7 +20,6 @@ public:
     
 private:
     Ui::PictureView *ui;
-    QPixmap *image;
 
 };
 
