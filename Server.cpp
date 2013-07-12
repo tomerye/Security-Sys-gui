@@ -94,10 +94,14 @@ void Server::send(const u_int32_t id, PacketForClient *packet) {
 }
 
 void Server::newEventPrv(u_int32_t clientid,PacketForServer packet){
-    std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
+//    std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
 
     QVector<QString> eventVector;
-    eventVector << QString::fromStdString(it->second->getSite()) << QString::fromStdString(packet.time_) << QString::fromStdString(it->second->getLocation()) << QString::number(packet.priority_);
+    std::stringstream ss;
+    ss<<clientid;
+    std::string strId;
+    ss >> strId;
+    eventVector << QString::fromStdString(strId) << QString::fromStdString(packet.time_) << QString::number(packet.priority_) << QString::fromStdString(packet.file_path_) ;
     emit newEvent(eventVector);
 }
 

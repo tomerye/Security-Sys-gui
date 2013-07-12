@@ -44,7 +44,7 @@ void ClientConnection::handleReceivePacket(const boost::system::error_code& e,
 		waitForPacket();
         switch (newPacket->opcode_) {
         case 1: //new event
-
+            pServer_->newEventPrv(this->id_,*newPacket);
             break;
         default:
             break;

@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //events model
     this->eventsModel = new QStandardItemModel(0,4,this);
     QStringList lables;
-    lables << "Location" << "Camera ID" << "Time" << "Priority";
+    lables << "Camera ID" << "Time" << "Priority";
     this->eventsModel->setHorizontalHeaderLabels(lables);
 
     //proxy
@@ -175,6 +175,6 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 //    QVariant data = index.data(QModelIndex);
     QStringList stringListData = (index.data()).toStringList();
 //    this->server_.getFile(stringListData[1].toStdString(),stringListData[2].toStdString());
-    this->server_.getFile(123,stringListData[2].toStdString());
+    this->server_.getFile(123,stringListData[3].toStdString());
 
 }

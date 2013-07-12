@@ -14,12 +14,14 @@ struct PacketForServer {
     int opcode_;
     std::string file_path_;
     int priority_;
+    std::string time_;
 
     template<typename Archive>
     void serialize(Archive& ar, const unsigned int version) {
         ar & opcode_;
         ar & file_path_;
         ar & priority_;
+        ar & time_;
     }
 };
 
