@@ -123,27 +123,28 @@ void Server::getFile(u_int32_t clientid, string srcPath){
     QUrl ftpClientUrl(url);
 
     QNetworkRequest downloadReq(ftpClientUrl);
-    QNetworkAccessManager *downloadManager = new QNetworkAccessManager(this);
-    QNetworkReply *reply = downloadManager->get(downloadReq);
-    qDebug() << reply->error();
-    connect(downloadManager,SIGNAL(finished(QNetworkReply*)),this,SLOT(newFtpPacket(QNetworkReply*)));
+    this->reply = this->downloadManager.get(downloadReq);
+
+//    connect(currentDownload,SIGNAL(downloadProgress(qint64,qint64)),)
+    connect(reply,SIGNAL(finished()),this,SLOT(newFtpPic()));
     connect(reply,SIGNAL(downloadProgress(qint64,qint64)),this,SLOT(downloadProgressSlot(qint64,qint64)));
 }
 
-void Server::newFtpPacket(QNetworkReply *reply){
-    QByteArray data = reply->readAll();
-    QVariant header = reply->header(QNetworkRequest::ContentTypeHeader);
-    qDebug()<< data;
-    qDebug() << reply->rawHeaderList();
-    qDebug () << header;
+void Server::newFtpPic(){
+    qDebug() << reply->error();
+
     qDebug() << reply->url();
-    reply->close();
-    QString saveFilePath = "/home/tomer/tmp/tmp2";
-    saveFilePath += "3";
+    qDebug() << reply->rawHeader("Content-Length");
+    QUrl receivedPicUrl = reply->url();
+    QString path = receivedPicUrl.path();
+    QString filename = QFileInfo(path).fileName();
+    QString saveFilePath = "/home/tomer/securitySystemPic/";
+    saveFilePath += filename;
     QFile file(saveFilePath);
     file.open(QIODevice::WriteOnly);
-    file.write(data);
-    file.close();
+    file.write(reply->readAll());
+    file.close();    
+    reply->deleteLater();
     emit newPicture(saveFilePath);
     emit downloadProgressSignal(0);
 }

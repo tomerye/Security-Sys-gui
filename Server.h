@@ -21,6 +21,7 @@
 #include <QDebug>
 #include <QNetworkReply>
 #include <QFile>
+#include <QFileInfo>
 
 //#include "FtpClient/FTPClient.h"
 
@@ -41,6 +42,9 @@ private:
 	boost::asio::io_service& io_service_;
 	tcp::acceptor acceptor_;
 	std::map<u_int32_t, ClientConnection*> connection_map_;
+    QNetworkAccessManager downloadManager;
+    QNetworkReply *reply;
+    QFile savePic;
 
 	void startAccept();
 	void addNewConnection(u_int32_t *id, tcp::socket *newSocket,
@@ -57,7 +61,7 @@ signals:
     void downloadProgressSignal(int);
 
 public slots:
-    void newFtpPacket(QNetworkReply*);
+    void newFtpPic();
     void downloadProgressSlot(qint64,qint64);
 
 };

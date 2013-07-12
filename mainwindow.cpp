@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //events model
     this->eventsModel = new QStandardItemModel(0,4,this);
     QStringList lables;
-    lables << "Camera ID" << "Time" << "Priority";
+    lables << "Camera ID" << "Time" << "Priority" << "Picture file";
     this->eventsModel->setHorizontalHeaderLabels(lables);
 
     //proxy
@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
 
     connect(&server_,SIGNAL(downloadProgressSignal(u_int32_t)),ui->progressBar,SLOT(setValue(int)));
+    connect(&server_,SIGNAL(newPicture(QString)),this,SLOT(openPictureView(QString)));
     setupDB();
     this->sqlModel = new QSqlQueryModel();
     ui->tableView_2->setModel(this->sqlModel);
@@ -110,10 +111,11 @@ void MainWindow::removeCamera(u_int32_t id){
     }
 }
 
-void MainWindow::openPictureView(std::string path){
+void MainWindow::openPictureView(QString path){
+    qDebug() << "TTTTTTTTTTTTTTT";
     this->pPictureView = new PictureView(this);
-    this->pPictureView->setPicture(path);
-    this->show();
+    this->pPictureView->setPicture(path.toStdString());
+    this->pPictureView->show();
 }
 
 void MainWindow::on_comboBox_currentIndexChanged(int index)
@@ -174,7 +176,9 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
 //    QVariant data = index.data(QModelIndex);
     QStringList stringListData = (index.data()).toStringList();
+    qDebug() << stringListData;
 //    this->server_.getFile(stringListData[1].toStdString(),stringListData[2].toStdString());
-    this->server_.getFile(123,stringListData[3].toStdString());
+    qDebug() << "want to download " << stringListData[0] << "the file ";
+    this->server_.getFile(123,stringListData[0].toStdString());
 
 }

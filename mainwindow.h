@@ -45,7 +45,7 @@ private:
 public slots:
     void newEventSlot(QVector<QString>);
     void removeCamera(u_int32_t);
-    void openPictureView(std::string);
+    void openPictureView(QString);
     void addClientConnection(u_int32_t);
 
 private slots:
