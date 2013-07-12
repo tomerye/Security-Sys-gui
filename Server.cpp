@@ -138,7 +138,7 @@ void Server::newFtpPic(){
     QUrl receivedPicUrl = reply->url();
     QString path = receivedPicUrl.path();
     QString filename = QFileInfo(path).fileName();
-    QString saveFilePath = "/home/tomer/securitySystemPic/";
+    QString saveFilePath = PIC_FOLDER;
     saveFilePath += filename;
     QFile file(saveFilePath);
     file.open(QIODevice::WriteOnly);

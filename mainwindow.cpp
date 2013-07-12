@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //new event
     connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
 
-    connect(&server_,SIGNAL(downloadProgressSignal(u_int32_t)),ui->progressBar,SLOT(setValue(int)));
+    connect(&server_,SIGNAL(downloadProgressSignal(int)),ui->progressBar,SLOT(setValue(int)));
     connect(&server_,SIGNAL(newPicture(QString)),this,SLOT(openPictureView(QString)));
     setupDB();
     this->sqlModel = new QSqlQueryModel();
@@ -112,7 +112,6 @@ void MainWindow::removeCamera(u_int32_t id){
 }
 
 void MainWindow::openPictureView(QString path){
-    qDebug() << "TTTTTTTTTTTTTTT";
     this->pPictureView = new PictureView(this);
     this->pPictureView->setPicture(path.toStdString());
     this->pPictureView->show();
@@ -174,6 +173,12 @@ void MainWindow::on_pushButton_2_clicked()
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
+    int row = index.row();
+//    QStandardItem *clientID = this->eventsModel->item(i);
+    qDebug() << this->eventProxyFilter->data(index);
+    QStandardItem *filename = this->eventsModel->item(row,3);
+    qDebug() << this->eventsModel->itemData(index);
+    qDebug() << filename->data().data();
 //    QVariant data = index.data(QModelIndex);
     QStringList stringListData = (index.data()).toStringList();
     qDebug() << stringListData;

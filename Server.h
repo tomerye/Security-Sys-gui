@@ -25,6 +25,8 @@
 
 //#include "FtpClient/FTPClient.h"
 
+#define PIC_FOLDER "/home/tomer/securitySystemPic/"
+
 class ClientConnection;
 using boost::asio::ip::tcp;
 class Server :public QObject{
