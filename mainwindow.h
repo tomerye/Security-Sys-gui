@@ -52,7 +52,6 @@ private slots:
     void on_comboBox_currentIndexChanged(int index);
     void on_pushButton_clicked();
     void on_listView_clicked(const QModelIndex &index);
-	void on_pushButton_2_clicked();
     void on_tableView_doubleClicked(const QModelIndex &index);
 };
 

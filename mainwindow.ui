@@ -49,6 +49,9 @@
         <height>381</height>
        </rect>
       </property>
+      <property name="editTriggers">
+       <set>QAbstractItemView::NoEditTriggers</set>
+      </property>
      </widget>
      <widget class="QComboBox" name="comboBox">
       <property name="geometry">

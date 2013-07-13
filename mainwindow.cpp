@@ -19,9 +19,10 @@ MainWindow::MainWindow(QWidget *parent) :
     //proxy
     this->eventProxyFilter = new QSortFilterProxyModel(this);
     this->eventProxyFilter->setSourceModel(this->eventsModel);
-    this->eventProxyFilter->setFilterKeyColumn(3); //filter priority
+    this->eventProxyFilter->setFilterKeyColumn(2); //filter priority
 
     //table
+    ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
     ui->tableView->setModel(this->eventProxyFilter);
 
 
@@ -79,7 +80,7 @@ void MainWindow::setupDB(){
     }
 }
 
-//ID (DATE TIME) priority path
+
 void MainWindow::newEventSlot(QVector<QString> event){
     qDebug() << event;
     this->eventsModel->insertRow(0,QModelIndex());
@@ -164,26 +165,18 @@ void MainWindow::on_listView_clicked(const QModelIndex &index)
 //    int priority1 = priorityFilter.rowCount(QModelIndex());
 //    ui->label->setText("level3: " + priority3 +" level2:" + priority2 + " level1:" + priority1);
 }
-void MainWindow::on_pushButton_2_clicked()
-{
-    this->pPictureView = new PictureView(this);
-    this->pPictureView->setPicture("/home/tomer/tmp/tmp2/2");
-    this->pPictureView->show();
-}
+
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
+    QModelIndexList selectedRows = ui->tableView->selectionModel()->selectedRows();
     int row = index.row();
-//    QStandardItem *clientID = this->eventsModel->item(i);
-    qDebug() << this->eventProxyFilter->data(index);
-    QStandardItem *filename = this->eventsModel->item(row,3);
-    qDebug() << this->eventsModel->itemData(index);
-    qDebug() << filename->data().data();
-//    QVariant data = index.data(QModelIndex);
-    QStringList stringListData = (index.data()).toStringList();
-    qDebug() << stringListData;
-//    this->server_.getFile(stringListData[1].toStdString(),stringListData[2].toStdString());
-    qDebug() << "want to download " << stringListData[0] << "the file ";
-    this->server_.getFile(123,stringListData[0].toStdString());
+    QString id =  this->eventProxyFilter->index(row,0).data().toString();
+    QString picName =  this->eventProxyFilter->index(row,3).data().toString();
+    std::stringstream ss;
+    ss << id.toStdString();
+    uint32_t intID;
+    ss >> intID;
+    this->server_.getFile(intID,picName.toStdString());
 
 }
