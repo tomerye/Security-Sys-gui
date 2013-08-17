@@ -52,8 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setupDB();
     this->sqlModel = new QSqlQueryModel();
     ui->tableView_2->setModel(this->sqlModel);
-
     ui->progressBar->setValue(0);
+
 }
 
 
@@ -155,21 +155,25 @@ void MainWindow::on_pushButton_clicked()
 
 void MainWindow::on_listView_clicked(const QModelIndex &index)
 {
-//    QVariant clientID = this->clientIdModel->data(index,Qt::DisplayRole);
-//    QSortFilterProxyModel clientIDFilter;
-//    clientIDFilter.setSourceModel(this->eventsModel);
-//    clientIDFilter.setFilterFixedString(clientID.toString());
-//    clientIDFilter.setFilterKeyColumn(1);
-//    QSortFilterProxyModel priorityFilter;
-//    priorityFilter.setSourceModel(clientIDFilter);
-//    priorityFilter.setFilterFixedString("1");
-//    priorityFilter.setFilterKeyColumn(3);
-//    int priority3 = priorityFilter.rowCount(QModelIndex());
-//    priorityFilter.setFilterKeyColumn(2);
-//    int priority2 = priorityFilter.rowCount(QModelIndex());
-//    priorityFilter.setFilterKeyColumn(1);
-//    int priority1 = priorityFilter.rowCount(QModelIndex());
-//    ui->label->setText("level3: " + priority3 +" level2:" + priority2 + " level1:" + priority1);
+    QString clientID = index.data().toString();
+    QSortFilterProxyModel clientIDFilter;
+    clientIDFilter.setSourceModel(this->eventsModel);
+    clientIDFilter.setFilterKeyColumn(0);
+    clientIDFilter.setFilterFixedString(clientID);
+    QSortFilterProxyModel priorityFilter;
+    priorityFilter.setSourceModel(&clientIDFilter);
+    priorityFilter.setFilterKeyColumn(2);
+
+    priorityFilter.setFilterFixedString("3");
+    int priority3 = priorityFilter.rowCount();
+    priorityFilter.setFilterFixedString("2");
+    int priority2 = priorityFilter.rowCount();
+    priorityFilter.setFilterFixedString("1");
+    int priority1 = priorityFilter.rowCount();
+    QString label;
+    label ="level3: " + QString::number(priority3) +" level2:" + QString::number(priority2) + " level1:" + QString::number(priority1);
+    ui->label->setText(label);
+
 }
 
 

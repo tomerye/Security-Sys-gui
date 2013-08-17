@@ -28,15 +28,15 @@
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
-      <string>Tab 1</string>
+      <string>Real Time</string>
      </attribute>
      <widget class="QListView" name="listView">
       <property name="geometry">
        <rect>
-        <x>570</x>
-        <y>30</y>
+        <x>600</x>
+        <y>60</y>
         <width>181</width>
-        <height>411</height>
+        <height>381</height>
        </rect>
       </property>
      </widget>
@@ -56,8 +56,8 @@
      <widget class="QComboBox" name="comboBox">
       <property name="geometry">
        <rect>
-        <x>50</x>
-        <y>20</y>
+        <x>290</x>
+        <y>30</y>
         <width>78</width>
         <height>25</height>
        </rect>
@@ -66,7 +66,7 @@
      <widget class="QProgressBar" name="progressBar">
       <property name="geometry">
        <rect>
-        <x>300</x>
+        <x>370</x>
         <y>30</y>
         <width>118</width>
         <height>23</height>
@@ -93,7 +93,7 @@
       <property name="geometry">
        <rect>
         <x>820</x>
-        <y>170</y>
+        <y>120</y>
         <width>98</width>
         <height>27</height>
        </rect>
@@ -102,10 +102,49 @@
        <string>disable</string>
       </property>
      </widget>
+     <widget class="QLabel" name="label">
+      <property name="geometry">
+       <rect>
+        <x>300</x>
+        <y>460</y>
+        <width>581</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_2">
+      <property name="geometry">
+       <rect>
+        <x>600</x>
+        <y>30</y>
+        <width>121</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Security Cameras:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_3">
+      <property name="geometry">
+       <rect>
+        <x>40</x>
+        <y>40</y>
+        <width>151</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Events:</string>
+      </property>
+     </widget>
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Tab 2</string>
+      <string>History</string>
      </attribute>
      <widget class="QTableView" name="tableView_2">
       <property name="geometry">
@@ -138,6 +177,32 @@
       </property>
       <property name="text">
        <string>query</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_4">
+      <property name="geometry">
+       <rect>
+        <x>55</x>
+        <y>20</y>
+        <width>101</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>SQL query:</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_5">
+      <property name="geometry">
+       <rect>
+        <x>60</x>
+        <y>140</y>
+        <width>66</width>
+        <height>17</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Result:</string>
       </property>
      </widget>
     </widget>
