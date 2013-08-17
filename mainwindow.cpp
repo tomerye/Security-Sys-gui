@@ -52,6 +52,8 @@ MainWindow::MainWindow(QWidget *parent) :
     setupDB();
     this->sqlModel = new QSqlQueryModel();
     ui->tableView_2->setModel(this->sqlModel);
+
+    ui->progressBar->setValue(0);
 }
 
 
@@ -88,6 +90,10 @@ void MainWindow::newEventSlot(QVector<QString> event){
     {
         QModelIndex modelindex = this->eventsModel->index(0,i,QModelIndex());
         this->eventsModel->setData(modelindex,event[i]);
+    }
+    if(this->eventsModel->rowCount()>100)
+    {
+        this->eventsModel->removeRow(this->eventsModel->rowCount());
     }
 }
 
@@ -179,4 +185,39 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
     ss >> intID;
     this->server_.getFile(intID,picName.toStdString());
 
+}
+
+
+
+void MainWindow::on_pushButton_2_clicked()
+{
+    QModelIndexList modIndexList = ui->listView->selectionModel()->selectedIndexes();
+    foreach(const QModelIndex i, modIndexList)
+    {
+        PacketForClient *startImageProcessingPacket = new PacketForClient();
+        startImageProcessingPacket->opcode_=3;
+        std::stringstream ss;
+        ss << i.data().toString().toStdString();
+        uint32_t intID;
+        ss >> intID;
+        this->server_.send(intID,startImageProcessingPacket);
+
+    }
+
+}
+
+void MainWindow::on_pushButton_3_clicked()
+{
+    QModelIndexList modIndexList = ui->listView->selectionModel()->selectedIndexes();
+    foreach(const QModelIndex i, modIndexList)
+    {
+        PacketForClient *stopImageProcessingPacket = new PacketForClient();
+        stopImageProcessingPacket->opcode_=4;
+        std::stringstream ss;
+        ss << i.data().toString().toStdString();
+        uint32_t intID;
+        ss >> intID;
+        this->server_.send(intID,stopImageProcessingPacket);
+
+    }
 }
