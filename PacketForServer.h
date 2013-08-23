@@ -14,7 +14,7 @@ struct PacketForServer {
     int opcode_;
     std::string file_path_;
     int priority_;
-    std::string time_;
+    time_t time_;
 
     template<typename Archive>
     void serialize(Archive& ar, const unsigned int version) {

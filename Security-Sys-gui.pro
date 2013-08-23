@@ -10,8 +10,8 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = Security-Sys-gui
 TEMPLATE = app
-
-LIBS += -L/usr/lib -lboost_system -lboost_thread -lpthread -lboost_serialization
+INCLUDEPATH += "/home/tomer/bbboo/include"
+LIBS += -L"/home/tomer/bbboo/lib" -lboost_system -lboost_thread -lpthread -lboost_serialization
 
 
 SOURCES += main.cpp\

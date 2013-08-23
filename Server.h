@@ -60,7 +60,7 @@ signals:
     void newPicture(QString);
     void newConnection(u_int32_t);
     void deleteConnectionSignal(u_int32_t);
-    void downloadProgressSignal(int);
+    void downloadProgressSignal(qint64,qint64);
 
 public slots:
     void newFtpPic();

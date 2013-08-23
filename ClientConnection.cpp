@@ -51,7 +51,9 @@ void ClientConnection::handleReceivePacket(const boost::system::error_code& e,
         }
 		std::cout.flush();
 	} else {
-		std::cout << "error while parsing the packet\n";
+        std::cout << "error handleReceivePacket\n";
+        std::cout << e.value();
+        std::cout << e.category().name();
 		pServer_->deleteConnection(id_);
 	}
 	delete newPacket;

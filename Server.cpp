@@ -12,12 +12,14 @@ using namespace std;
 Server::Server(int port, boost::asio::io_service &io_service) :
 		endpoint_(tcp::v4(), port), io_service_(io_service), acceptor_(
 				io_service, endpoint_) {
+        qDebug("INIT");
 	startAccept();
 
 }
 
 void Server::startAccept() {
 	cout << "Start accept!\n";
+    cout.flush();
 	tcp::socket *newSocket = new tcp::socket(io_service_);
 	acceptor_.async_accept(*newSocket,
 			boost::bind(&Server::handleGetNewConnectionID, this,
@@ -101,7 +103,7 @@ void Server::newEventPrv(u_int32_t clientid,PacketForServer packet){
     ss<<clientid;
     std::string strId;
     ss >> strId;
-    eventVector << QString::fromStdString(strId) << QString::fromStdString(packet.time_) << QString::number(packet.priority_) << QString::fromStdString(packet.file_path_) ;
+    eventVector << QString::fromStdString(strId) << QString::fromStdString(ctime(&packet.time_)) << QString::number(packet.priority_) << QString::fromStdString(packet.file_path_) ;
     emit newEvent(eventVector);
 }
 
@@ -146,14 +148,11 @@ void Server::newFtpPic(){
     file.close();    
     reply->deleteLater();
     emit newPicture(saveFilePath);
-    emit downloadProgressSignal(0);
+//    emit downloadProgressSignal(0);
 }
 
 
 void Server::downloadProgressSlot(qint64 received,qint64 total){
-    if(total!=0)
-        emit downloadProgressSignal((int)(received/total));
-    else
-        emit downloadProgressSignal(0);
+    emit downloadProgressSignal(received, total);
 }
 

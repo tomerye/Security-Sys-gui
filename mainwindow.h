@@ -36,7 +36,7 @@ private:
     QSqlDatabase db;
 
     void setupDB();
-
+    void updateLable();
     QStringListModel *clientIdModel;
     QStandardItemModel *eventsModel;
     QStandardItemModel *statisticModel;
@@ -48,6 +48,7 @@ public slots:
     void removeCamera(u_int32_t);
     void openPictureView(QString);
     void addClientConnection(u_int32_t);
+    void updateProgressBar(qint64,qint64);
 
 private slots:
     void on_comboBox_currentIndexChanged(int index);
@@ -56,6 +57,7 @@ private slots:
     void on_tableView_doubleClicked(const QModelIndex &index);
     void on_pushButton_2_clicked();
     void on_pushButton_3_clicked();
+    void on_pushButton_4_clicked();
 };
 
 #endif // MAINWINDOW_H
