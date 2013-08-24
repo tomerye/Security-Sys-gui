@@ -9,7 +9,7 @@
 
 ClientConnection::ClientConnection(tcp::socket *socket, Server *server,
 		u_int32_t id) :
-		id_(id), connection_(socket) {
+    id_(id), connection_(socket),active(false) {
 	this->pServer_ = server;
 	waitForPacket();
 }

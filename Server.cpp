@@ -106,6 +106,23 @@ void Server::newEventPrv(u_int32_t clientid,PacketForServer packet){
     eventVector << QString::fromStdString(strId) << QString::fromStdString(ctime(&packet.time_)) << QString::number(packet.priority_) << QString::fromStdString(packet.file_path_) ;
     emit newEvent(eventVector);
 }
+ void Server::setClientState(u_int32_t clientid, bool state){
+     std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
+     if (it == connection_map_.end()) {
+         qDebug() << "no such id/n";
+         return;
+     }
+     it->second->setState(state);
+ }
+
+ bool Server::getClientState(u_int32_t clientid){
+     std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
+     if (it == connection_map_.end()) {
+         qDebug() << "no such id/n";
+         return false;
+     }
+     return it->second->getState();
+ }
 
 void Server::getFile(u_int32_t clientid, string srcPath){
     std::map<u_int32_t, ClientConnection*>::iterator it = connection_map_.find(clientid);
@@ -113,6 +130,7 @@ void Server::getFile(u_int32_t clientid, string srcPath){
         qDebug() << "no such id/n";
         return;
     }
+
     boost::asio::ip::tcp::endpoint remote_ep = (*(it->second->getSocket())).remote_endpoint();
     boost::asio::ip::address remote_ad = remote_ep.address();
     std::string clientIP = remote_ad.to_string();

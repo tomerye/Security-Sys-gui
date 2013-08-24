@@ -38,6 +38,8 @@ public:
 	void send(const u_int32_t id, PacketForClient *packet);
     void newEventPrv(u_int32_t clientid ,PacketForServer event);
     void getFile(u_int32_t clientid, std::string srcPath);
+    void setClientState(u_int32_t clientid, bool state);
+    bool getClientState(u_int32_t clientid);
 
 private:
 	tcp::endpoint endpoint_;

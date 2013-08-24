@@ -13,7 +13,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //events model
     this->eventsModel = new QStandardItemModel(0,4,this);
     QStringList lables;
-    lables << "Camera ID" << "Time" << "Priority" << "Picture file";
+    lables << "Camera_ID" << "Time" << "Priority" << "Picture_file";
     this->eventsModel->setHorizontalHeaderLabels(lables);
 
     //proxy
@@ -26,9 +26,11 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->tableView->setModel(this->eventProxyFilter);
 
 
+
     //id list
     this->clientIdModel = new QStringListModel(this);
     ui->listView->setModel(this->clientIdModel);
+    ui->listView_2->setModel(this->clientIdModel);
 
 
     //priority combobox
@@ -45,13 +47,13 @@ MainWindow::MainWindow(QWidget *parent) :
     //delete client
     connect(&server_,SIGNAL(deleteConnectionSignal(u_int32_t)),this,SLOT(removeCamera(u_int32_t)));
     //new event
-    connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(newEventSlot(QVector<QString>)));
+    connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(updateEventsTable(QVector<QString>)));
+    connect(&server_,SIGNAL(newEvent(QVector<QString>)),this , SLOT(updateDB(QVector<QString>)));
 
     connect(&server_,SIGNAL(downloadProgressSignal(qint64,qint64)),this,SLOT(updateProgressBar(qint64,qint64)));
     connect(&server_,SIGNAL(newPicture(QString)),this,SLOT(openPictureView(QString)));
+
     setupDB();
-    this->sqlModel = new QSqlQueryModel();
-    ui->tableView_2->setModel(this->sqlModel);
     ui->progressBar->setValue(0);
 
 }
@@ -66,12 +68,8 @@ MainWindow::~MainWindow()
 
 
 void MainWindow::setupDB(){
-    QString server = "";
-    QString dbname = "";
-
     db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setHostName("");
-    db.setDatabaseName("");
+    db.setDatabaseName("events.db");
 
     if(db.open())
     {
@@ -80,6 +78,12 @@ void MainWindow::setupDB(){
     else{
         qDebug() << "Error:= " << db.lastError();
     }
+    QSqlQuery query;
+    query.exec("DROP TABLE IF EXISTS events");
+    query.exec("CREATE TABLE events(Camera_ID int, Time varchar(50), Priority int, Picture_file varchar(30))");
+    this->sqlModel = new QSqlTableModel(this);
+    this->sqlModel->setTable("events");
+    this->ui->tableView_2->setModel(this->sqlModel);
 }
 
 void MainWindow::updateProgressBar(qint64 received,qint64 total){
@@ -87,7 +91,7 @@ void MainWindow::updateProgressBar(qint64 received,qint64 total){
     ui->progressBar->setValue(received);
 }
 
-void MainWindow::newEventSlot(QVector<QString> event){
+void MainWindow::updateEventsTable(QVector<QString> event){
     qDebug() << event;
     this->eventsModel->insertRow(0,QModelIndex());
     for(int i=0 ; i<event.size();i++)
@@ -95,7 +99,16 @@ void MainWindow::newEventSlot(QVector<QString> event){
         QModelIndex modelindex = this->eventsModel->index(0,i,QModelIndex());
         this->eventsModel->setData(modelindex,event[i]);
     }
+    ui->tableView->resizeColumnsToContents();
     this->updateLable();
+}
+
+void MainWindow::updateDB(QVector<QString> event){
+    QSqlQuery query;
+    QString q = "insert into events values("+event[0] +",'" +event[1]+"',"  +event[2]+",'" +event[3] +"')";
+    qDebug() << "to DB" << q;
+    bool res = query.exec(q);
+    qDebug() << "insert res = " << res;
 }
 
 void MainWindow::addClientConnection(u_int32_t id){
@@ -152,7 +165,8 @@ void MainWindow::on_comboBox_currentIndexChanged(int index)
 
 void MainWindow::on_pushButton_clicked()
 {
-    this->sqlModel->setQuery(ui->textEdit->toPlainText());
+    this->sqlModel->select();
+    ui->tableView_2->resizeColumnsToContents();
 }
 
 void MainWindow::on_listView_clicked(const QModelIndex &index)
@@ -181,19 +195,18 @@ void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 
 void MainWindow::on_pushButton_2_clicked()
 {
-    //start capture
-    QModelIndexList modIndexList = ui->listView->selectionModel()->selectedIndexes();
-    foreach(const QModelIndex i, modIndexList)
-    {
-        PacketForClient *startImageProcessingPacket = new PacketForClient();
-        startImageProcessingPacket->opcode_=3;
-        std::stringstream ss;
-        ss << i.data().toString().toStdString();
-        uint32_t intID;
-        ss >> intID;
-        this->server_.send(intID,startImageProcessingPacket);
+    QString command  = this->ui->plainTextEdit->toPlainText();
 
-    }
+    PacketForClient *commandPacket = new PacketForClient();
+    commandPacket->opcode_ = 5;
+    commandPacket->command_ = command.toStdString();
+    QModelIndexList modIndexList = ui->listView_2->selectionModel()->selectedIndexes();
+    QString clientID = modIndexList.at(0).data().toString();
+    std::stringstream ss;
+    ss << clientID.toStdString();
+    uint32_t intID;
+    ss >> intID;
+    this->server_.send(intID,commandPacket);
 
 }
 
@@ -215,28 +228,39 @@ void MainWindow::updateLable(){
     priorityFilter.setFilterFixedString("1");
     int priority1 = priorityFilter.rowCount();
     QString label;
-    label ="level3: " + QString::number(priority3) +" level2:" + QString::number(priority2) + " level1:" + QString::number(priority1);
+    std::stringstream ss;
+    ss << clientID.toStdString();
+    uint32_t intID;
+    ss >> intID;
+    bool state = this->server_.getClientState(intID);
+    QString strState = state?"Active":"Not Active";
+    label ="State:" + strState +"\nlevel3: " + QString::number(priority3) +" level2:" + QString::number(priority2) + " level1:" + QString::number(priority1);
     ui->label->setText(label);
 }
 
-void MainWindow::on_pushButton_3_clicked()
-{
-    //stop capture
-    QModelIndexList modIndexList = ui->listView->selectionModel()->selectedIndexes();
-    foreach(const QModelIndex i, modIndexList)
-    {
-        PacketForClient *stopImageProcessingPacket = new PacketForClient();
-        stopImageProcessingPacket->opcode_=4;
-        std::stringstream ss;
-        ss << i.data().toString().toStdString();
-        uint32_t intID;
-        ss >> intID;
-        this->server_.send(intID,stopImageProcessingPacket);
-
-    }
-}
 
 void MainWindow::on_pushButton_4_clicked()
 {
     this->eventsModel->removeRows(0,this->eventsModel->rowCount());
+}
+
+void MainWindow::on_listView_doubleClicked(const QModelIndex &index)
+{
+    QString id = index.data().toString();
+    std::stringstream ss;
+    ss << id.toStdString();
+    uint32_t intID;
+    ss >> intID;
+    PacketForClient *startImageProcessingPacket = new PacketForClient();
+    bool clientStatus = server_.getClientState(intID);
+    if(clientStatus){
+        startImageProcessingPacket->opcode_=4;
+    }
+    else{
+        startImageProcessingPacket->opcode_=3;
+
+    }
+    this->server_.send(intID,startImageProcessingPacket);
+    server_.setClientState(intID,!clientStatus);
+
 }

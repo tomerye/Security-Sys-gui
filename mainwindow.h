@@ -41,14 +41,15 @@ private:
     QStandardItemModel *eventsModel;
     QStandardItemModel *statisticModel;
     QSortFilterProxyModel *eventProxyFilter;
-    QSqlQueryModel *sqlModel;
+    QSqlTableModel *sqlModel;
 
 public slots:
-    void newEventSlot(QVector<QString>);
+    void updateEventsTable(QVector<QString>);
     void removeCamera(u_int32_t);
     void openPictureView(QString);
     void addClientConnection(u_int32_t);
     void updateProgressBar(qint64,qint64);
+    void updateDB(QVector<QString> event);
 
 private slots:
     void on_comboBox_currentIndexChanged(int index);
@@ -56,8 +57,8 @@ private slots:
     void on_listView_clicked(const QModelIndex &index);
     void on_tableView_doubleClicked(const QModelIndex &index);
     void on_pushButton_2_clicked();
-    void on_pushButton_3_clicked();
     void on_pushButton_4_clicked();
+    void on_listView_doubleClicked(const QModelIndex &index);
 };
 
 #endif // MAINWINDOW_H
